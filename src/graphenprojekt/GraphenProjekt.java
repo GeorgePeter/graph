@@ -236,8 +236,7 @@ public class GraphenProjekt extends JFrame {
                         "Zeichen",
                         "neuen knoten wählen",
                         JOptionPane.QUESTION_MESSAGE,
-                        null, null,
-                        maximale_Knotenanzahl + "");
+                        null, null,"");
                 tempknoten = tempknotenstring.charAt(0);
             }
         });
@@ -279,11 +278,10 @@ public class GraphenProjekt extends JFrame {
                  repaint();
                  //Auswahldialog
                  String tempknotenstring = (String) JOptionPane.showInputDialog(null,
-                        "Zeichen",
-                        "neuen knoten wählen",
+                        "löschen",
+                        "Knoten löschen",
                         JOptionPane.QUESTION_MESSAGE,
-                        null, null,
-                        maximale_Knotenanzahl + "");
+                        null, null,"");
                 tempknoten = tempknotenstring.charAt(0);
              }
         });
