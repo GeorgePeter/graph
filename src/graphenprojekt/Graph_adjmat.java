@@ -58,7 +58,7 @@ public class Graph_adjmat {
     }
     
 
-    private int knotennr(int kn) {
+    public int knotennr(char kn) {
         
         int i;
         for (i = 0; i < knzahl; i++) {

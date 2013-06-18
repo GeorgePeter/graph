@@ -1,7 +1,6 @@
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
- * test
  */
 package graphenprojekt;
 
@@ -11,10 +10,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+//schallala
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import javax.swing.JButton;
 
 import javax.swing.JFrame;
@@ -34,31 +34,84 @@ public class GraphenProjekt extends JFrame {
      */
     JButton neuer_knoten;
     JButton neue_kante;
+    JButton weg_zeichnen;
     //optionsdialog
     JDialog d = new JDialog();
     Graph_adjmat graph;
     /**
      * Spielfeldvariablen
      */
-    int maximale_Knotenanzahl           = 7;
-    int Knotendurchmesser               = 30;
-    int Knotendurchmesser_markiert      = 34;
-    int xpadding                        = 70;
-    int ypadding                        = 50;
-    int button_breite                   = 140;
-    int button_höhe                     = 20;
-    int font_size                       = 13;
+    int maximale_Knotenanzahl = 7;
+    int Knotendurchmesser = 30;
+    int Knotendurchmesser_markiert = 34;
+    int xpadding = 70;
+    int ypadding = 50;
+    int button_breite = 140;
+    int button_höhe = 20;
+    int font_size = 13;
     char tempknoten;
-    static final int NICHTS             = 0;
-    static final int STEIN_LEGEN        = 1;
-    static final int NEUE_KANTE         = 2;
-    static final int STEIN_ENTFERNEN    = 3;
-    static final int KANTE_ENTFERNEN    = 4;
-    static final int WEG_ZEICHNEN       = 5;
-    int action                          = NICHTS;
-    Knoten tmp_start                    = null;
+    static final int NICHTS = 0;
+    static final int STEIN_LEGEN = 1;
+    static final int NEUE_KANTE = 2;
+    static final int STEIN_ENTFERNEN = 3;
+    static final int KANTE_ENTFERNEN = 4;
+    static final int WEG_ZEICHNEN = 5;
+    int action = NICHTS;
+    Knoten tmp_start = null;
 
-    public void Deijkstra(Graphics gg) {
+    public ArrayList<Knoten> Dijkstra(Knoten a, Knoten b) {
+
+        
+        Knoten current = a;
+        
+        //zu betrachten
+        ArrayList<Knoten> Kb    = new ArrayList<Knoten>(); 
+        ArrayList<Knoten> route = new ArrayList<Knoten>(); 
+        int[] dist = new int[maximale_Knotenanzahl]; 
+        
+        //alle knoten außer a müssen betrachtet werden
+        for (int i = 0; i < maximale_Knotenanzahl; i++) {
+            if(graph.knoten[i] != a){
+                Kb.add(graph.knoten[i]);
+                if (graph.kante[graph.knotennr(a.data)][i] != 0) {
+                    //verbindung besteht
+                    route.add(graph.knoten[i]);   
+                    dist[i] = graph.kante[graph.knotennr(a.data)][i];
+                }else{
+                    route.add(null);    
+                    dist[i] = -1;
+                }
+            }
+        }
+        while(!Kb.isEmpty()){
+            
+            int u=0;
+            for (int i = 0; i < maximale_Knotenanzahl; i++) {
+                
+                if(dist[i] < dist[u] && 
+                        Kb.contains(graph.knoten[i])){
+                    if(dist[u] == -1){
+                        //fehler
+                    }
+                    u = i;
+                    Kb.remove(graph.knoten[i]);
+                }
+            }
+                 for (int k = 0; k < maximale_Knotenanzahl; k++) {
+                     if (graph.kante[u][k] != 0) {
+                         int L = dist[u]+ graph.kante[u][k];
+                         if(L < dist[k]){
+                             route.set(k, graph.knoten[u]);
+                             dist[k] = L;
+                         }
+                     }
+                 }
+                    
+            }
+            
+            
+        return route;
+       
     }
 
     public void KanteZeichnen(Knoten von, Knoten bis, Graphics g) {
@@ -100,6 +153,8 @@ public class GraphenProjekt extends JFrame {
 
 
         g.setColor(Color.black);
+        ArrayList<Knoten> markieren = new ArrayList<Knoten>();
+       
         /**
          * *
          * erst die Linien zeichnen, damit sie nicht später die Knoten
@@ -200,6 +255,18 @@ public class GraphenProjekt extends JFrame {
         neue_kante.setBounds(button_breite + 10, 0, button_breite, button_höhe);
         this.add(neue_kante);
 
+        
+        // neue Kante
+        weg_zeichnen = new JButton("zeige Weg");
+        weg_zeichnen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                action = WEG_ZEICHNEN;
+                repaint();
+            }
+        });
+        weg_zeichnen.setBounds(button_breite*2 + 10, 0, button_breite, button_höhe);
+        this.add(weg_zeichnen);
         addMouseListener(new CMeinMausAdapter());
     }
 
