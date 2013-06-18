@@ -25,7 +25,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author george
+ * @author george,Sascha
  */
 public class GraphenProjekt extends JFrame {
 
@@ -35,6 +35,7 @@ public class GraphenProjekt extends JFrame {
     JButton neuer_knoten;
     JButton neue_kante;
     JButton weg_zeichnen;
+    JButton stein_entfernen;
     //optionsdialog
     JDialog d = new JDialog();
     Graph_adjmat graph;
@@ -267,6 +268,27 @@ public class GraphenProjekt extends JFrame {
         });
         weg_zeichnen.setBounds(button_breite*2 + 10, 0, button_breite, button_höhe);
         this.add(weg_zeichnen);
+        
+        
+        // lösche Knoten
+        stein_entfernen = new JButton("lösche Knoten");
+        stein_entfernen.addActionListener(new ActionListener() {
+             @Override
+             public void actionPerformed(ActionEvent arg0) {
+                 action = STEIN_ENTFERNEN;
+                 repaint();
+                 //Auswahldialog
+                 String tempknotenstring = (String) JOptionPane.showInputDialog(null,
+                        "Zeichen",
+                        "neuen knoten wählen",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null, null,
+                        maximale_Knotenanzahl + "");
+                tempknoten = tempknotenstring.charAt(0);
+             }
+        });
+        stein_entfernen.setBounds(button_breite*3 + 10, 0, button_breite, button_höhe);
+        this.add(stein_entfernen);
         addMouseListener(new CMeinMausAdapter());
     }
 
@@ -309,6 +331,8 @@ public class GraphenProjekt extends JFrame {
                     }
                     break;
                 case STEIN_ENTFERNEN:
+                    graph.knotenloeschen(tempknoten, graph);
+                    action = NICHTS;
                     break;
                 case STEIN_LEGEN:
                     if (graph.knotenneu(x, y, tempknoten)) {
