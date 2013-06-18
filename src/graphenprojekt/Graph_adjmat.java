@@ -1,5 +1,7 @@
 package graphenprojekt;
 
+import javax.swing.JOptionPane;
+
 public class Graph_adjmat {
 
     private int knzahl      = 0;
@@ -83,7 +85,18 @@ public class Graph_adjmat {
     }
 
 // weiter Methoden noch zu realisieren
-    public void knotenloeschen(int Kn) {
+    public void knotenloeschen(char Kn, Graph_adjmat graph) {
+        if(graph.enthält(Kn)) {
+            for (int i = 0; i < knzahl; i++) {
+                if(knoten[i].data == Kn) {
+                    knoten[i].data=' ';
+                    knoten[i].x = 0;
+                    knoten[i].y = 0;
+                }    
+            }
+        }
+        else 
+            JOptionPane.showMessageDialog(null,"Knoten nicht vorhanden","Info",JOptionPane.WARNING_MESSAGE);    
     }
 
     public void kanteloeschen(int K1, int K2) {
