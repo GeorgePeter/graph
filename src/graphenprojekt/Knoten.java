@@ -6,7 +6,7 @@ package graphenprojekt;
 
 /**
  *
- * @author george
+ * @author george, Sascha
  */
 public class Knoten {
     
