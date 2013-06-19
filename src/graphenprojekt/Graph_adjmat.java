@@ -170,7 +170,15 @@ public class Graph_adjmat {
                      , splitres[2].charAt(0));      //data
              
 		}
-            
+            for (int i = 0; i < nzahl; i++) {
+                w = f.readLine();
+                System.out.println(""+w);
+                splitres = w.split(";");
+                for (int k = 0; k < nzahl; k++) {
+                    this.kante[i][k] = Integer.parseInt(splitres[k]);
+                }
+                
+            }
             System.out.println();
             
 		f.close();
