@@ -277,12 +277,7 @@ public class GraphenProjekt extends JFrame {
                  action = STEIN_ENTFERNEN;
                  repaint();
                  //Auswahldialog
-                 String tempknotenstring = (String) JOptionPane.showInputDialog(null,
-                        "löschen",
-                        "Knoten löschen",
-                        JOptionPane.QUESTION_MESSAGE,
-                        null, null,"");
-                tempknoten = tempknotenstring.charAt(0);
+                 
              }
         });
         stein_entfernen.setBounds(button_breite*3 + 10, 0, button_breite, button_höhe);
@@ -301,12 +296,13 @@ public class GraphenProjekt extends JFrame {
             int x, y;
             x = e.getX();
             y = e.getY();
-
+            Knoten tst;
+            
             switch (action) {
 
                 case NEUE_KANTE:
 
-                    Knoten tst = graph.KnotenAnStelle(x, y);
+                     tst = graph.KnotenAnStelle(x, y);
 
                     if (tst != null) {
 
@@ -329,7 +325,10 @@ public class GraphenProjekt extends JFrame {
                     }
                     break;
                 case STEIN_ENTFERNEN:
-                    graph.knotenloeschen(tempknoten, graph);
+                    tst = graph.KnotenAnStelle(x, y);
+                    if(tst != null){
+                        graph.knotenloeschen(tst.data, graph);
+                    }
                     action = NICHTS;
                     break;
                 case STEIN_LEGEN:
