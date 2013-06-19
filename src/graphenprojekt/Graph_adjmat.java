@@ -1,5 +1,11 @@
 package graphenprojekt;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 public class Graph_adjmat {
@@ -24,7 +30,7 @@ public class Graph_adjmat {
 
     public boolean knotenneu(int x, int y, char Kn) {
         
-        
+       
         if(KnotenAnStelle(x,y) == null && !enthält(Kn)){
             knoten[knzahl] = new Knoten(x,y,Kn);
             knzahl++;
@@ -38,7 +44,7 @@ public class Graph_adjmat {
        
         for (int i = 0; i < knzahl; i++) // Initialisieren: alle Kanten-
         {
-            
+            if(this.knoten[i] != null)
             if(knoten[i].data == a)
                 return true;
             
@@ -48,11 +54,13 @@ public class Graph_adjmat {
     
     public Knoten KnotenAnStelle(int x, int y){
         
+        
         for (int i = 0; i < knzahl; i++) // durchlaufe Knoten
         {
-            if( x<= this.knoten[i].x + this.toleranz && x >= this.knoten[i].x - this.toleranz &&
+            if(this.knoten[i] != null)
+            if(x<= this.knoten[i].x + this.toleranz && x >= this.knoten[i].x - this.toleranz &&
                  y<= this.knoten[i].y + this.toleranz && y >= this.knoten[i].y - this.toleranz){
-                
+                System.out.println("schallala "+this.knoten[i].x+" "+this.knoten[i].y);
                 return this.knoten[i];
             }
         }
@@ -102,10 +110,116 @@ public class Graph_adjmat {
     public void kanteloeschen(int K1, int K2) {
     }
 
-    public void dateischreiben() {
+    public void dateischreiben(String file) {
+        BufferedWriter f;
+    String s;
+ 
+    try {
+      f = new BufferedWriter(
+           new FileWriter(file));
+      
+      f.write(this.knzahl+"");
+      f.newLine();
+      Knoten cur;
+      for (int i = 1; i <= this.knzahl; ++i) {
+        cur = this.knoten[i-1];  
+        s = cur.x+";"+cur.y+";"+cur.data+";"+cur.markiert;
+        f.write(s);
+        f.newLine();
+        
+      }
+      int c = 0;
+      for (int i = 0; i < this.knzahl; i++) {
+        for (int k = 0; k < this.knzahl; k++) {  
+            c = this.kante[i][k];  
+            s = c+";";
+            f.write(s);
+        }
+        f.newLine();
+      }
+      
+      f.newLine();
+      f.close();
+    } catch (IOException e) {
+      System.out.println("Fehler beim Erstellen der Datei");
+    }
     }
 
-    public void dateilesen() {
+    public void dateilesen(String file) {
+        BufferedReader f;
+	String w;
+        String[] splitres; 
+        int nzahl;
+	try {
+            f = new BufferedReader(
+	    new FileReader(file));
+            w=f.readLine();
+            nzahl=Integer.parseInt(w);
+            
+         System.out.println(""+nzahl);   
+        for (int i = 0; i < nzahl; i++) {
+            
+            
+             w = f.readLine();
+             System.out.println(""+w);
+             splitres = w.split(";");
+            System.out.println(""+splitres[2]);   
+             this.knotenneu(
+                     Integer.parseInt(splitres[0])  //x
+                     , Integer.parseInt(splitres[1])//y
+                     , splitres[2].charAt(0));      //data
+             
+		}
+            
+            System.out.println();
+            
+		f.close();
+		}
+                catch (Exception e) {
+		  	      System.out.println("Fehler beim Lesen der Datei "+e.getLocalizedMessage());
+		}
+	}
+    
+    /**
+     * markiert dann die Knoten auf dem kürzesten Weg
+     * von Knoten a nach Knoten b
+     * @param a
+     * @param b 
+     */
+    public void Dijkstra(Knoten a, Knoten b) {
+
+        //zu betrachten
+        ArrayList<Knoten> erreichbare_Knoten = new ArrayList<Knoten>();
+        
+        //erreichbare Knoten von a:
+        for (int i = 0; i < this.knzahl; i++) {
+            if(this.knoten[i] != null){
+               if(this.kante[this.knotennr(a.data)][i] != 0){
+                   erreichbare_Knoten.add(this.knoten[i]);
+               }
+            }
+        }
+        int kleinster_index;
+        int kleinste_entfernung = Integer.MAX_VALUE;
+        for (int i = 0; i < erreichbare_Knoten.size();i++){
+            erreichbare_Knoten.get(i).distanz_zum_start 
+                    = this.kante[this.knotennr(a.data)][this.knotennr(erreichbare_Knoten.get(i).data)];
+            erreichbare_Knoten.get(i).vor = a;
+            if(erreichbare_Knoten.get(i).distanz_zum_start < kleinste_entfernung){
+                kleinste_entfernung = erreichbare_Knoten.get(i).distanz_zum_start;
+                kleinster_index = i;
+            }
+        }
+        
+        while(!erreichbare_Knoten.isEmpty()){
+            
+        }
+                
+        
     }
+    
+    
+    
+    
 // fakultativ Breitensuche, Tiefensuche oder Wegsuche
 }

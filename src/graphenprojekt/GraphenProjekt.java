@@ -15,10 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import javax.swing.JButton;
-
-import javax.swing.JFrame;
-import javax.swing.JDialog;
+import javax.swing.*;
 
 
 import javax.swing.JOptionPane;
@@ -46,11 +43,20 @@ public class GraphenProjekt extends JFrame {
     int Knotendurchmesser = 30;
     int Knotendurchmesser_markiert = 34;
     int xpadding = 70;
-    int ypadding = 50;
+    int ypadding = 80;
     int button_breite = 140;
     int button_höhe = 20;
     int font_size = 13;
     char tempknoten;
+    
+     // Menüleiste
+    JMenuBar menueLeiste;
+    // Menüleiste Elemente
+    JMenuItem beenden;
+    JMenuItem datei;
+    JMenuItem speichern;
+    JMenuItem laden;
+    
     static final int NICHTS = 0;
     static final int STEIN_LEGEN = 1;
     static final int NEUE_KANTE = 2;
@@ -59,61 +65,6 @@ public class GraphenProjekt extends JFrame {
     static final int WEG_ZEICHNEN = 5;
     int action = NICHTS;
     Knoten tmp_start = null;
-
-    public ArrayList<Knoten> Dijkstra(Knoten a, Knoten b) {
-
-        
-        Knoten current = a;
-        
-        //zu betrachten
-        ArrayList<Knoten> Kb    = new ArrayList<Knoten>(); 
-        ArrayList<Knoten> route = new ArrayList<Knoten>(); 
-        int[] dist = new int[maximale_Knotenanzahl]; 
-        
-        //alle knoten außer a müssen betrachtet werden
-        for (int i = 0; i < maximale_Knotenanzahl; i++) {
-            if(graph.knoten[i] != a){
-                Kb.add(graph.knoten[i]);
-                if (graph.kante[graph.knotennr(a.data)][i] != 0) {
-                    //verbindung besteht
-                    route.add(graph.knoten[i]);   
-                    dist[i] = graph.kante[graph.knotennr(a.data)][i];
-                }else{
-                    route.add(null);    
-                    dist[i] = -1;
-                }
-            }
-        }
-        while(!Kb.isEmpty()){
-            
-            int u=0;
-            for (int i = 0; i < maximale_Knotenanzahl; i++) {
-                
-                if(dist[i] < dist[u] && 
-                        Kb.contains(graph.knoten[i])){
-                    if(dist[u] == -1){
-                        //fehler
-                    }
-                    u = i;
-                    Kb.remove(graph.knoten[i]);
-                }
-            }
-                 for (int k = 0; k < maximale_Knotenanzahl; k++) {
-                     if (graph.kante[u][k] != 0) {
-                         int L = dist[u]+ graph.kante[u][k];
-                         if(L < dist[k]){
-                             route.set(k, graph.knoten[u]);
-                             dist[k] = L;
-                         }
-                     }
-                 }
-                    
-            }
-            
-            
-        return route;
-       
-    }
 
     public void KanteZeichnen(Knoten von, Knoten bis, Graphics g) {
 
@@ -154,8 +105,7 @@ public class GraphenProjekt extends JFrame {
 
 
         g.setColor(Color.black);
-        ArrayList<Knoten> markieren = new ArrayList<Knoten>();
-       
+        
         /**
          * *
          * erst die Linien zeichnen, damit sie nicht später die Knoten
@@ -167,6 +117,8 @@ public class GraphenProjekt extends JFrame {
                 if (graph.kante[k][j] != 0) {
 
                     g.setColor(Color.blue);
+                    if(graph.knoten[k].markiert && graph.knoten[j].markiert)
+                        g.setColor(Color.green);
                     KanteZeichnen(graph.knoten[k], graph.knoten[j], g);
 
                 }
@@ -219,11 +171,13 @@ public class GraphenProjekt extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
 
-        setVisible(true);
+        
         setResizable(true);
         this.setSize(600, 600);
+        menueLeiste = new JMenuBar();
+        addMouseListener(new CMeinMausAdapter());
 
-
+         
         // neuer Knoten
         neuer_knoten = new JButton("neuer Knoten");
         neuer_knoten.addActionListener(new ActionListener() {
@@ -282,7 +236,58 @@ public class GraphenProjekt extends JFrame {
         });
         stein_entfernen.setBounds(button_breite*3 + 10, 0, button_breite, button_höhe);
         this.add(stein_entfernen);
-        addMouseListener(new CMeinMausAdapter());
+        
+       
+
+        // Menüelemente erzeugen
+        datei = new JMenu("Datei");
+        beenden = new JMenuItem("Beenden");
+
+        beenden.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                System.exit(0);
+            }
+        });
+
+
+
+        speichern = new JMenuItem("Speichern");
+        speichern.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+
+                graph.dateischreiben("file1.txt");
+            }
+          
+        });
+
+        laden = new JMenuItem("Laden");
+        laden.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+
+               graph = new Graph_adjmat(maximale_Knotenanzahl); 
+               graph.toleranz = Knotendurchmesser / 2;
+               graph.dateilesen("file1.txt");
+               repaint();
+            }
+
+           
+        });
+
+        // Menüelemente hinzufügen
+        menueLeiste.add(datei);
+        
+        // Untermenüelemente hinzufügen
+        datei.add(laden);
+        datei.add(speichern);
+        datei.add(beenden);
+        
+        this.add(menueLeiste);
+        this.setJMenuBar(menueLeiste);
+
+        setVisible(true);
     }
 
     /**
@@ -297,7 +302,7 @@ public class GraphenProjekt extends JFrame {
             x = e.getX();
             y = e.getY();
             Knoten tst;
-            
+            if(x > xpadding && y > ypadding){
             switch (action) {
 
                 case NEUE_KANTE:
@@ -339,10 +344,30 @@ public class GraphenProjekt extends JFrame {
                     }
                     break;
                 case WEG_ZEICHNEN:
+                    tst = graph.KnotenAnStelle(x, y);
+
+                    if (tst != null) {
+
+                        if (tmp_start == null) {
+                            tst.markiert = !tst.markiert;
+                            tmp_start = tst;
+                        } else {
+
+                            if (!tmp_start.equals(tst)) {
+                               
+                                        
+                            }
+                           
+                            tmp_start = null;
+                            action = NICHTS;
+
+                        }
+                    }
                     break;
 
             }
             repaint();
+            }
         }
     }
 

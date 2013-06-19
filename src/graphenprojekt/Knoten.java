@@ -13,6 +13,9 @@ public class Knoten {
     public int x;
     public int y;
     public char data; 
+    public Knoten vor;
+    public int distanz_zum_start;
+    
     boolean markiert = false;
     
     public Knoten(int a, int b, char d){
