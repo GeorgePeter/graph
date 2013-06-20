@@ -33,6 +33,7 @@ public class GraphenProjekt extends JFrame {
     JButton neue_kante;
     JButton weg_zeichnen;
     JButton stein_entfernen;
+    JButton kante_entfernen;
     //optionsdialog
     JDialog d = new JDialog();
     Graph_adjmat graph;
@@ -237,6 +238,18 @@ public class GraphenProjekt extends JFrame {
         stein_entfernen.setBounds(button_breite*3 + 10, 0, button_breite, button_höhe);
         this.add(stein_entfernen);
         
+        // Kante entfernen
+        kante_entfernen = new JButton("Kante entfernen");
+        kante_entfernen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                action = KANTE_ENTFERNEN;
+                repaint();
+            }
+        });
+        kante_entfernen.setBounds(button_breite*4 + 10, 0, button_breite, button_höhe);
+        this.add(kante_entfernen);
+        
        
 
         // Menüelemente erzeugen
@@ -361,6 +374,24 @@ public class GraphenProjekt extends JFrame {
                             tmp_start = null;
                             action = NICHTS;
 
+                        }
+                    }
+                    break;
+                case KANTE_ENTFERNEN:
+                    tst = graph.KnotenAnStelle(x, y);
+                    if (tst != null) {
+                        if (tmp_start == null) {
+                            tst.markiert = !tst.markiert;
+                            tmp_start = tst;
+                        } 
+                        else { 
+                            if (!tmp_start.equals(tst)) {
+                                graph.kanteloeschen(tmp_start.data, tst.data);
+                            }
+                            tst.markiert = false;
+                            tmp_start.markiert = false;
+                            tmp_start = null;
+                            action = NICHTS;
                         }
                     }
                     break;
