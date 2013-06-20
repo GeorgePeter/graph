@@ -100,14 +100,29 @@ public class Graph_adjmat {
                     knoten[i].data=' ';
                     knoten[i].x = 0;
                     knoten[i].y = 0;
-                }    
-            }
+                    for (int t = 0; t < knzahl; t++) {
+                        kante[i][t] = 0;
+                        kante[t][i] = 0;
+                    }
+                }   
+            } 
         }
+        
         else 
             JOptionPane.showMessageDialog(null,"Knoten nicht vorhanden","Info",JOptionPane.WARNING_MESSAGE);    
     }
 
-    public void kanteloeschen(int K1, int K2) {
+    public void kanteloeschen(char K1, char K2) {
+        int n1, n2;
+       //Prüfen, ob beide Knoten existieren !
+        n1 = knotennr(K1);
+        n2 = knotennr(K2);
+        if (n1 >= 0 && n2 >= 0) {
+            kante[n1][n2] = 0;
+            kante[n2][n1] = 0;
+        } else {
+            System.out.println("Kanten unmoeglich - Knoten nicht vorhanden");
+        }
     }
 
     public void dateischreiben(String file) {
