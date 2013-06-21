@@ -133,7 +133,8 @@ public class GraphenProjekt extends JFrame {
                 if (graph.kante[k][j] != 0) {
 
                     g.setColor(color_kante);
-                    if(graph.knoten[k].markiert && graph.knoten[j].markiert)
+                    if(graph.knoten[k].markiert && graph.knoten[j].markiert
+                       && graph.knoten[j].vor.equals(graph.knoten[k]))
                         g.setColor(color_kante_markiert);
                     KanteZeichnen(graph.knoten[k], graph.knoten[j], g);
 
