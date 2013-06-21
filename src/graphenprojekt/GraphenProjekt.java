@@ -207,7 +207,7 @@ public class GraphenProjekt extends JFrame {
                 repaint();
             }
         });
-        neue_kante.setBounds(button_breite + 10, 0, button_breite, button_höhe);
+        neue_kante.setBounds(button_breite, 0, button_breite, button_höhe);
         this.add(neue_kante);
 
         
@@ -220,7 +220,7 @@ public class GraphenProjekt extends JFrame {
                 repaint();
             }
         });
-        weg_zeichnen.setBounds(button_breite*2 + 10, 0, button_breite, button_höhe);
+        weg_zeichnen.setBounds(button_breite*2 , 0, button_breite, button_höhe);
         this.add(weg_zeichnen);
         
         
@@ -235,7 +235,7 @@ public class GraphenProjekt extends JFrame {
                  
              }
         });
-        stein_entfernen.setBounds(button_breite*3 + 10, 0, button_breite, button_höhe);
+        stein_entfernen.setBounds(0, button_höhe, button_breite, button_höhe);
         this.add(stein_entfernen);
         
         // Kante entfernen
@@ -247,7 +247,7 @@ public class GraphenProjekt extends JFrame {
                 repaint();
             }
         });
-        kante_entfernen.setBounds(button_breite*4 + 10, 0, button_breite, button_höhe);
+        kante_entfernen.setBounds(button_breite, button_höhe, button_breite, button_höhe);
         this.add(kante_entfernen);
         
        
@@ -368,7 +368,8 @@ public class GraphenProjekt extends JFrame {
 
                             if (!tmp_start.equals(tst)) {
                                
-                                        
+                               graph.Dijkstra(tmp_start, tst);
+                               repaint();
                             }
                            
                             tmp_start = null;

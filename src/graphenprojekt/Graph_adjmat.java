@@ -209,36 +209,96 @@ public class Graph_adjmat {
      * @param a
      * @param b 
      */
+    
     public void Dijkstra(Knoten a, Knoten b) {
 
+        
+        System.out.println("a :"+a.data+" b: "+b.data);
         //zu betrachten
         ArrayList<Knoten> erreichbare_Knoten = new ArrayList<Knoten>();
+        ArrayList<Knoten> besuchte_Knoten = new ArrayList<Knoten>();
+        Knoten current;
         
+        besuchte_Knoten.add(a);
+        a.vor = a;
         //erreichbare Knoten von a:
         for (int i = 0; i < this.knzahl; i++) {
-            if(this.knoten[i] != null){
+            if(this.knoten[i] != null && !((this.knoten[i].data+"").equals(""))){
+                
                if(this.kante[this.knotennr(a.data)][i] != 0){
+                   System.out.println("jolo"+this.knoten[i].data+"");
                    erreichbare_Knoten.add(this.knoten[i]);
+                   
                }
             }
         }
-        int kleinster_index;
+        int kleinster_index = 0;
         int kleinste_entfernung = Integer.MAX_VALUE;
         for (int i = 0; i < erreichbare_Knoten.size();i++){
             erreichbare_Knoten.get(i).distanz_zum_start 
                     = this.kante[this.knotennr(a.data)][this.knotennr(erreichbare_Knoten.get(i).data)];
             erreichbare_Knoten.get(i).vor = a;
-            if(erreichbare_Knoten.get(i).distanz_zum_start < kleinste_entfernung){
+            if(erreichbare_Knoten.get(i).distanz_zum_start < kleinste_entfernung && !erreichbare_Knoten.get(i).equals(a)){
                 kleinste_entfernung = erreichbare_Knoten.get(i).distanz_zum_start;
                 kleinster_index = i;
             }
         }
         
+        
+        current = erreichbare_Knoten.get(kleinster_index);
+        
         while(!erreichbare_Knoten.isEmpty()){
             
+            //aktuellen knoten aus erreichbaren entfernen
+            erreichbare_Knoten.remove(current);
+            if(current.equals(b)){
+                        System.out.println("b gefunden");
+                       break;
+                   }
+            //aktuellen knoten zu den besuchten hinzufügen
+            besuchte_Knoten.add(current);
+            //erreichbare Knoten von current:
+            for (int i = 0; i < this.knzahl; i++) {
+                if(this.knoten[i] != null){
+                   if(this.kante[i][this.knotennr(current.data)] != 0){
+                       if(!besuchte_Knoten.contains(this.knoten[i]))
+                       erreichbare_Knoten.add(this.knoten[i]);
+                   }
+                }
+            }
+            
+           kleinster_index = 0;
+           kleinste_entfernung = Integer.MAX_VALUE;
+           int entfernung = Integer.MAX_VALUE;
+           
+           for (int i = 0; i < erreichbare_Knoten.size();i++){
+               
+               entfernung = Integer.MAX_VALUE;
+               if(this.kante[this.knotennr(erreichbare_Knoten.get(i).data)][this.knotennr(current.data)] > 0)
+                   
+                    entfernung = current.distanz_zum_start + this.kante[this.knotennr(erreichbare_Knoten.get(i).data)][this.knotennr(current.data)];
+               
+               if(entfernung < erreichbare_Knoten.get(i).distanz_zum_start){
+                   erreichbare_Knoten.get(i).distanz_zum_start = entfernung;
+                   erreichbare_Knoten.get(i).vor = current;
+                   
+               }
+           }
+           
+           //jetzt backtracken
+          
+           
         }
-                
         
+         if(current.equals(b)){
+            
+            while(!current.equals(a)){
+                current.markiert = true;
+                
+                current          = current.vor;
+            }
+            a.markiert = true;
+           }
     }
     
     
