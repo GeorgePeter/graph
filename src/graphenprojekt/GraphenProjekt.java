@@ -5,6 +5,7 @@
 package graphenprojekt;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -46,8 +47,9 @@ public class GraphenProjekt extends JFrame {
     int maximale_Knotenanzahl = 7;
     int Knotendurchmesser = 30;
     int Knotendurchmesser_markiert = 34;
-    int xpadding = 70;
-    int ypadding = 80;
+    int xpadding = 30;
+    int ypadding_oben = 100;
+    int ypadding = 20;
     int button_breite = 140;
     int button_höhe = 20;
     int font_size = 13;
@@ -60,18 +62,19 @@ public class GraphenProjekt extends JFrame {
     JMenuItem datei;
     JMenuItem speichern;
     JMenuItem laden;
+    JMenuItem neu;
     
-    static Color color_markiert = new Color(100, 200, 100);
-    static Color color_knoten = Color.BLACK;
-    static Color color_knoten_zeichen = Color.WHITE;
-    static Color color_kante = Color.blue;
-    static Color color_kante_markiert = new Color(100, 200, 100);
+    static Color farbe_knoten_markiert = new Color(100, 200, 100);
+    static Color farbe_knoten = Color.BLACK;
+    static Color farbe_knoten_zeichen = Color.WHITE;
+    static Color farbe_kante = Color.blue;
+    static Color farbe_kante_markiert = new Color(100, 200, 100);
     
     
     static final int NICHTS = 0;
-    static final int STEIN_LEGEN = 1;
+    static final int KNOTEN_LEGEN = 1;
     static final int NEUE_KANTE = 2;
-    static final int STEIN_ENTFERNEN = 3;
+    static final int KNOTEN_ENTFERNEN = 3;
     static final int KANTE_ENTFERNEN = 4;
     static final int WEG_ZEICHNEN = 5;
     int action = NICHTS;
@@ -80,6 +83,12 @@ public class GraphenProjekt extends JFrame {
     
     Knoten tmp_start = null;
 
+    /**
+     * Zeichnet eine Kante von - bis
+     * @param von
+     * @param bis
+     * @param g 
+     */
     public void KanteZeichnen(Knoten von, Knoten bis, Graphics g) {
 
         int x = (bis.x - von.x);
@@ -106,6 +115,13 @@ public class GraphenProjekt extends JFrame {
         g.drawLine(von.x, von.y, bisX, bisY);
 
     }
+    
+    public void Neu(){
+        
+        graph = new Graph_adjmat(maximale_Knotenanzahl); 
+        graph.toleranz = Knotendurchmesser / 2;
+        repaint();
+    }
 
     @Override
     public void paint(Graphics gg) {
@@ -119,7 +135,9 @@ public class GraphenProjekt extends JFrame {
         //Durchlaufe das Spielfeld und Zeichne es
         g.setFont(new Font("Sans", Font.BOLD, font_size));
 
-
+        g.setColor(Color.GRAY);
+        g.drawRect(xpadding, ypadding_oben, this.getWidth()-2*xpadding,this.getHeight()-ypadding_oben-ypadding);
+        
         g.setColor(Color.black);
         
         /**
@@ -132,10 +150,14 @@ public class GraphenProjekt extends JFrame {
             for (int j = 0; j < maximale_Knotenanzahl; j++) {
                 if (graph.kante[k][j] != 0) {
 
-                    g.setColor(color_kante);
+                    g.setColor(farbe_kante);
+                    //nur wenn der weg in Dijkstra-algorithmus 
+                    //auch beabsichtigt ist wird zwischen benachbarten
+                    //und markierten knoten eine Kante markiert
                     if(graph.knoten[k].markiert && graph.knoten[j].markiert
                        && graph.knoten[j].vor.equals(graph.knoten[k]))
-                        g.setColor(color_kante_markiert);
+                    g.setColor(farbe_kante_markiert);
+                    
                     KanteZeichnen(graph.knoten[k], graph.knoten[j], g);
 
                 }
@@ -150,7 +172,7 @@ public class GraphenProjekt extends JFrame {
                     //markierte Knoten zeichnen
                     if (graph.knoten[j].markiert) {
                         
-                        g.setColor(color_markiert);
+                        g.setColor(farbe_knoten_markiert);
                         
                         g.fillOval(graph.knoten[j].x - Knotendurchmesser_markiert / 2,
                                 graph.knoten[j].y - Knotendurchmesser_markiert / 2,
@@ -158,9 +180,10 @@ public class GraphenProjekt extends JFrame {
                                 Knotendurchmesser_markiert);
                     }
                     //standardknoten zeichnen
-                    g.setColor(color_knoten);
+                    g.setColor(farbe_knoten);
                     g.fillOval(graph.knoten[j].x - Knotendurchmesser / 2, graph.knoten[j].y - Knotendurchmesser / 2, Knotendurchmesser, Knotendurchmesser);
-                    g.setColor(color_knoten_zeichen);
+                    //halbwegs in der Mitte platzierte Knotenzeichen
+                    g.setColor(farbe_knoten_zeichen);
                     g.drawString("" + graph.knoten[j].data,
                             graph.knoten[j].x - font_size / 4,
                             graph.knoten[j].y + font_size / 2);
@@ -174,15 +197,15 @@ public class GraphenProjekt extends JFrame {
         //Doppelpufferung
         Graphics2D g2dComponent = (Graphics2D) gg;
         g2dComponent.drawImage(bufferedImage, null, 0, 0);
-        g.clearRect(xpadding, ypadding, this.getWidth(), this.getHeight());
+        g.clearRect(xpadding, ypadding_oben, this.getWidth()-2*xpadding, this.getHeight()-ypadding-ypadding_oben);
 
     }
 
     GraphenProjekt() {
 
-        //	Angaben zum Fenster		
+        //Angaben zum Fenster		
         setTitle("Graph");
-
+        action = NICHTS;
         graph = new Graph_adjmat(maximale_Knotenanzahl);
         graph.toleranz = Knotendurchmesser / 2;
 
@@ -193,6 +216,7 @@ public class GraphenProjekt extends JFrame {
         dateiauswahl = new JFileChooser();
         setResizable(true);
         this.setSize(600, 600);
+        this.setMinimumSize(new Dimension(3*(xpadding+button_breite)+xpadding,300));
         menueLeiste = new JMenuBar();
         addMouseListener(new CMeinMausAdapter());
 
@@ -202,7 +226,7 @@ public class GraphenProjekt extends JFrame {
         neuer_knoten.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                action = STEIN_LEGEN;
+                action = KNOTEN_LEGEN;
                 repaint();
                 // Auswahldialog
                 String tempknotenstring = (String) JOptionPane.showInputDialog(null,
@@ -210,10 +234,14 @@ public class GraphenProjekt extends JFrame {
                         "neuen knoten wählen",
                         JOptionPane.QUESTION_MESSAGE,
                         null, null,"");
-                tempknoten = tempknotenstring.charAt(0);
+                if(tempknotenstring != null)
+                    tempknoten = tempknotenstring.charAt(0);
+                else{
+                    action = NICHTS;
+                }
             }
         });
-        neuer_knoten.setBounds(0, 0, button_breite, button_höhe);
+        neuer_knoten.setBounds(xpadding, 0, button_breite, button_höhe);
         this.add(neuer_knoten);
 
         // neue Kante
@@ -225,7 +253,7 @@ public class GraphenProjekt extends JFrame {
                 repaint();
             }
         });
-        neue_kante.setBounds(button_breite, 0, button_breite, button_höhe);
+        neue_kante.setBounds(button_breite+xpadding*2, 0, button_breite, button_höhe);
         this.add(neue_kante);
 
         
@@ -238,7 +266,7 @@ public class GraphenProjekt extends JFrame {
                 repaint();
             }
         });
-        weg_zeichnen.setBounds(button_breite*2 , 0, button_breite, button_höhe);
+        weg_zeichnen.setBounds((button_breite+xpadding)*2+xpadding , 0, button_breite, button_höhe);
         this.add(weg_zeichnen);
         
         
@@ -247,13 +275,13 @@ public class GraphenProjekt extends JFrame {
         stein_entfernen.addActionListener(new ActionListener() {
              @Override
              public void actionPerformed(ActionEvent arg0) {
-                 action = STEIN_ENTFERNEN;
+                 action = KNOTEN_ENTFERNEN;
                  repaint();
                  //Auswahldialog
                  
              }
         });
-        stein_entfernen.setBounds(0, button_höhe, button_breite, button_höhe);
+        stein_entfernen.setBounds(xpadding, button_höhe+3, button_breite, button_höhe);
         this.add(stein_entfernen);
         
         // Kante entfernen
@@ -265,13 +293,24 @@ public class GraphenProjekt extends JFrame {
                 repaint();
             }
         });
-        kante_entfernen.setBounds(button_breite, button_höhe, button_breite, button_höhe);
+        kante_entfernen.setBounds((button_breite)+xpadding*2, button_höhe+3, button_breite, button_höhe);
         this.add(kante_entfernen);
         
        
 
         // Menüelemente erzeugen
         datei = new JMenu("Datei");
+        
+        neu = new JMenuItem("Neu");
+
+        neu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                Neu();
+            }
+        });
+        
+        
         beenden = new JMenuItem("Beenden");
 
         beenden.addActionListener(new ActionListener() {
@@ -294,7 +333,7 @@ public class GraphenProjekt extends JFrame {
                 if(rueckgabeWert == JFileChooser.APPROVE_OPTION)
                 {
                      // Ausgabe der ausgewaehlten Datei
-                    graph.dateischreiben(dateiauswahl.getSelectedFile().getName());
+                    graph.dateischreiben(dateiauswahl.getSelectedFile().getPath());
                 }
                 
             }
@@ -316,7 +355,7 @@ public class GraphenProjekt extends JFrame {
                 if(rueckgabeWert == JFileChooser.APPROVE_OPTION)
                 {
                      // Ausgabe der ausgewaehlten Datei
-                    graph.dateilesen(dateiauswahl.getSelectedFile().getName());
+                    graph.dateilesen(dateiauswahl.getSelectedFile().getPath());
                 }
                 
               
@@ -330,6 +369,7 @@ public class GraphenProjekt extends JFrame {
         menueLeiste.add(datei);
         
         // Untermenüelemente hinzufügen
+        datei.add(neu);
         datei.add(laden);
         datei.add(speichern);
         datei.add(beenden);
@@ -353,7 +393,12 @@ public class GraphenProjekt extends JFrame {
             x = e.getX();
             y = e.getY();
             Knoten tst;
-            if(x > xpadding && y > ypadding){
+            
+            //damit die Knoten auch auf das Feld passen überprüfe deren Position
+            if(x > xpadding+Knotendurchmesser/2 && y > ypadding_oben+Knotendurchmesser/2 &&
+                    x < e.getComponent().getWidth() -  xpadding-Knotendurchmesser/2 &&
+                    y < e.getComponent().getHeight() - ypadding-Knotendurchmesser/2
+                    && action != NICHTS){
             switch (action) {
 
                 case NEUE_KANTE:
@@ -380,14 +425,14 @@ public class GraphenProjekt extends JFrame {
                         }
                     }
                     break;
-                case STEIN_ENTFERNEN:
+                case KNOTEN_ENTFERNEN:
                     tst = graph.KnotenAnStelle(x, y);
                     if(tst != null){
                         graph.knotenloeschen(tst.data, graph);
                     }
                     action = NICHTS;
                     break;
-                case STEIN_LEGEN:
+                case KNOTEN_LEGEN:
                     if (graph.knotenneu(x, y, tempknoten)) {
 
                         action = NICHTS;
@@ -436,8 +481,8 @@ public class GraphenProjekt extends JFrame {
                     break;
 
             }
-            repaint();
-            }
+            
+            }repaint();
         }
     }
 
