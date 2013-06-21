@@ -189,9 +189,9 @@ public class Graph_adjmat {
             
             
              w = f.readLine();
-             System.out.println(""+w);
+             
              splitres = w.split(";");
-            System.out.println(""+splitres[2]);   
+            
              this.knotenneu(
                      Integer.parseInt(splitres[0])  //x
                      , Integer.parseInt(splitres[1])//y
@@ -200,14 +200,14 @@ public class Graph_adjmat {
 		}
             for (int i = 0; i < nzahl; i++) {
                 w = f.readLine();
-                System.out.println(""+w);
+                
                 splitres = w.split(";");
                 for (int k = 0; k < nzahl; k++) {
                     this.kante[i][k] = Integer.parseInt(splitres[k]);
                 }
                 
             }
-            System.out.println();
+            
             
 		f.close();
 		}
