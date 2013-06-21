@@ -8,13 +8,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 //schallala
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import javax.swing.*;
 
 
@@ -61,6 +61,13 @@ public class GraphenProjekt extends JFrame {
     JMenuItem speichern;
     JMenuItem laden;
     
+    static Color color_markiert = new Color(100, 200, 100);
+    static Color color_knoten = Color.BLACK;
+    static Color color_knoten_zeichen = Color.WHITE;
+    static Color color_kante = Color.blue;
+    static Color color_kante_markiert = new Color(100, 200, 100);
+    
+    
     static final int NICHTS = 0;
     static final int STEIN_LEGEN = 1;
     static final int NEUE_KANTE = 2;
@@ -68,6 +75,9 @@ public class GraphenProjekt extends JFrame {
     static final int KANTE_ENTFERNEN = 4;
     static final int WEG_ZEICHNEN = 5;
     int action = NICHTS;
+    
+    
+    
     Knoten tmp_start = null;
 
     public void KanteZeichnen(Knoten von, Knoten bis, Graphics g) {
@@ -103,6 +113,8 @@ public class GraphenProjekt extends JFrame {
         //gebufferte ausgabe
         BufferedImage bufferedImage = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bufferedImage.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
         super.paintComponents(g);
         //Durchlaufe das Spielfeld und Zeichne es
         g.setFont(new Font("Sans", Font.BOLD, font_size));
@@ -120,9 +132,9 @@ public class GraphenProjekt extends JFrame {
             for (int j = 0; j < maximale_Knotenanzahl; j++) {
                 if (graph.kante[k][j] != 0) {
 
-                    g.setColor(Color.blue);
+                    g.setColor(color_kante);
                     if(graph.knoten[k].markiert && graph.knoten[j].markiert)
-                        g.setColor(Color.green);
+                        g.setColor(color_kante_markiert);
                     KanteZeichnen(graph.knoten[k], graph.knoten[j], g);
 
                 }
@@ -136,16 +148,18 @@ public class GraphenProjekt extends JFrame {
 
                     //markierte Knoten zeichnen
                     if (graph.knoten[j].markiert) {
-                        g.setColor(Color.yellow);
+                        
+                        g.setColor(color_markiert);
+                        
                         g.fillOval(graph.knoten[j].x - Knotendurchmesser_markiert / 2,
                                 graph.knoten[j].y - Knotendurchmesser_markiert / 2,
                                 Knotendurchmesser_markiert,
                                 Knotendurchmesser_markiert);
                     }
                     //standardknoten zeichnen
-                    g.setColor(Color.black);
+                    g.setColor(color_knoten);
                     g.fillOval(graph.knoten[j].x - Knotendurchmesser / 2, graph.knoten[j].y - Knotendurchmesser / 2, Knotendurchmesser, Knotendurchmesser);
-                    g.setColor(Color.white);
+                    g.setColor(color_knoten_zeichen);
                     g.drawString("" + graph.knoten[j].data,
                             graph.knoten[j].x - font_size / 4,
                             graph.knoten[j].y + font_size / 2);
