@@ -30,11 +30,17 @@ public class Graph_adjmat {
 
     public boolean knotenneu(int x, int y, char Kn) {
         
-       
-        if(KnotenAnStelle(x,y) == null && !enthält(Kn)){
-            knoten[knzahl] = new Knoten(x,y,Kn);
-            knzahl++;
-            return true;
+        if(KnotenAnStelle(x,y) == null){
+            if(!enthält(Kn)){
+                knoten[knzahl] = new Knoten(x,y,Kn);
+                knzahl++;
+                return true;
+            }
+            else{
+                JOptionPane.showMessageDialog(null,"Knoten mit diesem Zeichen bereits vorhanden","Info",JOptionPane.WARNING_MESSAGE);    
+            }
+        }else{
+            JOptionPane.showMessageDialog(null,"Knoten zu nah an einem bereits existierenden Knoten","Info",JOptionPane.WARNING_MESSAGE);    
         }
         return false;
     }
@@ -60,7 +66,6 @@ public class Graph_adjmat {
             if(this.knoten[i] != null)
             if(x<= this.knoten[i].x + this.toleranz && x >= this.knoten[i].x - this.toleranz &&
                  y<= this.knoten[i].y + this.toleranz && y >= this.knoten[i].y - this.toleranz){
-                System.out.println("schallala "+this.knoten[i].x+" "+this.knoten[i].y);
                 return this.knoten[i];
             }
         }
@@ -78,7 +83,12 @@ public class Graph_adjmat {
         }
         return -1;
     }
-
+/**
+ * erzeugt im Kantenarray einen neuen Eintrag Kante[K1][K2] = wert:
+ * @param K1
+ * @param K2
+ * @param wert 
+ */
     public void kanteneu(char K1, char K2, int wert) {
         
         int n1, n2;
@@ -87,12 +97,15 @@ public class Graph_adjmat {
         n2 = knotennr(K2);
         if (n1 >= 0 && n2 >= 0) {
             kante[n1][n2] = wert;
-        } else {
-            System.out.println("Kanten unmoeglich - Knoten nicht vorhanden");
-        }
+        } 
     }
 
 // weiter Methoden noch zu realisieren
+    /**
+     * TODO: beim löschen wärs besser zu sagen knoten[i] = null
+     * @param Kn
+     * @param graph 
+     */
     public void knotenloeschen(char Kn, Graph_adjmat graph) {
         if(graph.enthält(Kn)) {
             for (int i = 0; i < knzahl; i++) {
@@ -121,7 +134,7 @@ public class Graph_adjmat {
             kante[n1][n2] = 0;
             kante[n2][n1] = 0;
         } else {
-            System.out.println("Kanten unmoeglich - Knoten nicht vorhanden");
+            JOptionPane.showMessageDialog(null,"Fehler! Knoten nicht vorhanden","Info",JOptionPane.WARNING_MESSAGE);    
         }
     }
 
@@ -156,7 +169,7 @@ public class Graph_adjmat {
       f.newLine();
       f.close();
     } catch (IOException e) {
-      System.out.println("Fehler beim Erstellen der Datei");
+      JOptionPane.showMessageDialog(null,"Fehler beim erstellen der Datei","Info",JOptionPane.WARNING_MESSAGE);    
     }
     }
 
@@ -199,9 +212,26 @@ public class Graph_adjmat {
 		f.close();
 		}
                 catch (Exception e) {
-		  	      System.out.println("Fehler beim Lesen der Datei "+e.getLocalizedMessage());
+		  	      JOptionPane.showMessageDialog(null,"Fehler beim lesen der Datei","Info",JOptionPane.WARNING_MESSAGE);    
 		}
 	}
+    
+    public void AlleEntmarkieren(){
+        for (int i = 0; i < this.knzahl;i++){
+            this.knoten[i].markiert = false;
+           
+        }
+        
+    }
+    public void AlleStatusZurücksetzen(){
+        
+        for (int i = 0; i < this.knzahl;i++){
+            this.knoten[i].markiert = false;
+            this.knoten[i].vor = null;
+            this.knoten[i].distanz_zum_start = Integer.MAX_VALUE;
+        }
+         
+    }
     
     /**
      * markiert dann die Knoten auf dem kürzesten Weg
@@ -209,11 +239,10 @@ public class Graph_adjmat {
      * @param a
      * @param b 
      */
-    
     public void Dijkstra(Knoten a, Knoten b) {
 
         
-        System.out.println("a :"+a.data+" b: "+b.data);
+        this.AlleStatusZurücksetzen();
         //zu betrachten
         ArrayList<Knoten> erreichbare_Knoten = new ArrayList<Knoten>();
         ArrayList<Knoten> besuchte_Knoten = new ArrayList<Knoten>();
@@ -222,11 +251,13 @@ public class Graph_adjmat {
         besuchte_Knoten.add(a);
         a.vor = a;
         //erreichbare Knoten von a:
+        
+        /**
+         * initialisieren mit Knoten a
+         */
         for (int i = 0; i < this.knzahl; i++) {
             if(this.knoten[i] != null && !((this.knoten[i].data+"").equals(""))){
-                
                if(this.kante[this.knotennr(a.data)][i] != 0){
-                   System.out.println("jolo"+this.knoten[i].data+"");
                    erreichbare_Knoten.add(this.knoten[i]);
                    
                }
@@ -244,15 +275,18 @@ public class Graph_adjmat {
             }
         }
         
+        if(!erreichbare_Knoten.isEmpty()){
+            current = erreichbare_Knoten.get(kleinster_index);
         
-        current = erreichbare_Knoten.get(kleinster_index);
-        
+            
+        /**
+         * alle erreichbaren Knoten durchlaufen
+         */    
         while(!erreichbare_Knoten.isEmpty()){
             
             //aktuellen knoten aus erreichbaren entfernen
             erreichbare_Knoten.remove(current);
             if(current.equals(b)){
-                        System.out.println("b gefunden");
                        break;
                    }
             //aktuellen knoten zu den besuchten hinzufügen
@@ -260,9 +294,12 @@ public class Graph_adjmat {
             //erreichbare Knoten von current:
             for (int i = 0; i < this.knzahl; i++) {
                 if(this.knoten[i] != null){
-                   if(this.kante[i][this.knotennr(current.data)] != 0){
-                       if(!besuchte_Knoten.contains(this.knoten[i]))
-                       erreichbare_Knoten.add(this.knoten[i]);
+                   if(this.kante[this.knotennr(current.data)][i] != 0){
+                       if(!besuchte_Knoten.contains(this.knoten[i]) && !erreichbare_Knoten.contains(this.knoten[i])){
+                         erreichbare_Knoten.add(this.knoten[i]);
+                         this.knoten[i].vor = current;   
+                         this.knoten[i].distanz_zum_start = current.distanz_zum_start + this.kante[this.knotennr(current.data)][i];   
+                       }
                    }
                 }
             }
@@ -274,22 +311,25 @@ public class Graph_adjmat {
            for (int i = 0; i < erreichbare_Knoten.size();i++){
                
                entfernung = Integer.MAX_VALUE;
-               if(this.kante[this.knotennr(erreichbare_Knoten.get(i).data)][this.knotennr(current.data)] > 0)
-                   
-                    entfernung = current.distanz_zum_start + this.kante[this.knotennr(erreichbare_Knoten.get(i).data)][this.knotennr(current.data)];
+               if(this.kante[this.knotennr(current.data)][this.knotennr(erreichbare_Knoten.get(i).data)] > 0)    
+                    entfernung = current.distanz_zum_start + this.kante[this.knotennr(current.data)][this.knotennr(erreichbare_Knoten.get(i).data)];
                
                if(entfernung < erreichbare_Knoten.get(i).distanz_zum_start){
                    erreichbare_Knoten.get(i).distanz_zum_start = entfernung;
-                   erreichbare_Knoten.get(i).vor = current;
-                   
+                   erreichbare_Knoten.get(i).vor = a;
                }
+              if(erreichbare_Knoten.get(i).distanz_zum_start < kleinste_entfernung){
+                kleinste_entfernung = erreichbare_Knoten.get(i).distanz_zum_start;
+                kleinster_index = i;
+             }
            }
+           if(erreichbare_Knoten.size() > 0)
+            current = erreichbare_Knoten.get(kleinster_index);
            
-           //jetzt backtracken
           
            
         }
-        
+        //jetzt backtracken
          if(current.equals(b)){
             
             while(!current.equals(a)){
@@ -298,7 +338,11 @@ public class Graph_adjmat {
                 current          = current.vor;
             }
             a.markiert = true;
-           }
+           }else{
+             JOptionPane.showMessageDialog(null,"Keine Verbindung","Info",JOptionPane.WARNING_MESSAGE);    
+         }
+        }else
+            JOptionPane.showMessageDialog(null,"Keine Verbindung","Info",JOptionPane.WARNING_MESSAGE);    
     }
     
     

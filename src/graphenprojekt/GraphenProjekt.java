@@ -37,6 +37,9 @@ public class GraphenProjekt extends JFrame {
     //optionsdialog
     JDialog d = new JDialog();
     Graph_adjmat graph;
+    JFileChooser dateiauswahl;
+    
+    
     /**
      * Spielfeldvariablen
      */
@@ -172,7 +175,7 @@ public class GraphenProjekt extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
 
-        
+        dateiauswahl = new JFileChooser();
         setResizable(true);
         this.setSize(600, 600);
         menueLeiste = new JMenuBar();
@@ -269,8 +272,16 @@ public class GraphenProjekt extends JFrame {
         speichern.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-
-                graph.dateischreiben("file1.txt");
+                
+                int rueckgabeWert = dateiauswahl.showOpenDialog(null);
+                dateiauswahl.setDialogType(JFileChooser.SAVE_DIALOG);
+                /* Abfrage, ob auf "Öffnen" geklickt wurde */
+                if(rueckgabeWert == JFileChooser.APPROVE_OPTION)
+                {
+                     // Ausgabe der ausgewaehlten Datei
+                    graph.dateischreiben(dateiauswahl.getSelectedFile().getName());
+                }
+                
             }
           
         });
@@ -279,10 +290,21 @@ public class GraphenProjekt extends JFrame {
         laden.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-
+                
+                
                graph = new Graph_adjmat(maximale_Knotenanzahl); 
                graph.toleranz = Knotendurchmesser / 2;
-               graph.dateilesen("file1.txt");
+               
+                int rueckgabeWert = dateiauswahl.showOpenDialog(null);
+                dateiauswahl.setDialogType(JFileChooser.OPEN_DIALOG);
+                /* Abfrage, ob auf "Öffnen" geklickt wurde */
+                if(rueckgabeWert == JFileChooser.APPROVE_OPTION)
+                {
+                     // Ausgabe der ausgewaehlten Datei
+                    graph.dateilesen(dateiauswahl.getSelectedFile().getName());
+                }
+                
+              
                repaint();
             }
 
@@ -310,7 +332,8 @@ public class GraphenProjekt extends JFrame {
 
         @Override
         public void mousePressed(MouseEvent e) {
-
+            
+            graph.AlleEntmarkieren();
             int x, y;
             x = e.getX();
             y = e.getY();
@@ -319,7 +342,7 @@ public class GraphenProjekt extends JFrame {
             switch (action) {
 
                 case NEUE_KANTE:
-
+                     
                      tst = graph.KnotenAnStelle(x, y);
 
                     if (tst != null) {
