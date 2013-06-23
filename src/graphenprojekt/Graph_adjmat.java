@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 
 public class Graph_adjmat {
 
-    private int knzahl = 0;
+    private int knzahl = 7;
     int[][] kante;                  // Kantenmatrix
     public Knoten[] knoten;         // Knotenvektor
     public int toleranz = 0;    // Radius in dem der Knoten noch als der 
@@ -24,6 +24,7 @@ public class Graph_adjmat {
         {
             for (int j = 0; j < knzahl; j++) {
                 kante[i][j] = 0;
+                knoten[i]=null;
             }
         }
     }
@@ -32,9 +33,12 @@ public class Graph_adjmat {
 
         if (KnotenAnStelle(x, y) == null) {
             if (!enthält(Kn)) {
-                knoten[knzahl] = new Knoten(x, y, Kn);
-                knzahl++;
-                return true;
+                for(int i = 0; i<=knzahl;i++) {
+                    if(knoten[i] == null) {
+                        knoten[i] = new Knoten(x, y, Kn);
+                        return true;   
+                    }
+                }
             } else {
                 JOptionPane.showMessageDialog(null, "Knoten mit diesem Zeichen bereits vorhanden", "Info", JOptionPane.WARNING_MESSAGE);
             }
@@ -103,7 +107,7 @@ public class Graph_adjmat {
     }
 
     /**
-     * TODO: beim löschen wärs besser zu sagen knoten[i] = null
+     * TODO: beim löschen wärs besser zu sagen knoten[i] = null == erledigt
      *
      * @param Kn
      * @param graph
@@ -111,10 +115,8 @@ public class Graph_adjmat {
     public void knotenloeschen(char Kn, Graph_adjmat graph) {
         if (graph.enthält(Kn)) {
             for (int i = 0; i < knzahl; i++) {
-                if (knoten[i].data == Kn) {
-                    knoten[i].data = ' ';
-                    knoten[i].x = 0;
-                    knoten[i].y = 0;
+                if (knoten[i] != null && knoten[i].data == Kn) {
+                    knoten[i]= null;
                     for (int t = 0; t < knzahl; t++) {
                         kante[i][t] = 0;
                         kante[t][i] = 0;
@@ -151,10 +153,12 @@ public class Graph_adjmat {
             f.newLine();
             Knoten cur;
             for (int i = 1; i <= this.knzahl; ++i) {
-                cur = this.knoten[i - 1];
-                s = cur.x + ";" + cur.y + ";" + cur.data + ";" + cur.markiert;
-                f.write(s);
-                f.newLine();
+                if(knoten[i-1] != null) {
+                    cur = this.knoten[i - 1];
+                    s = cur.x + ";" + cur.y + ";" + cur.data + ";" + cur.markiert;
+                    f.write(s);
+                    f.newLine();
+                }
 
             }
             int c = 0;
@@ -218,8 +222,9 @@ public class Graph_adjmat {
 
     public void AlleEntmarkieren() {
         for (int i = 0; i < this.knzahl; i++) {
-            this.knoten[i].markiert = false;
-
+            if(knoten[i] != null){
+                this.knoten[i].markiert = false;
+            }      
         }
 
     }
@@ -227,9 +232,11 @@ public class Graph_adjmat {
     public void AlleStatusZurücksetzen() {
 
         for (int i = 0; i < this.knzahl; i++) {
-            this.knoten[i].markiert = false;
-            this.knoten[i].vor = null;
-            this.knoten[i].distanz_zum_start = Integer.MAX_VALUE;
+            if(knoten[i] != null) {
+                this.knoten[i].markiert = false;
+                this.knoten[i].vor = null;
+                this.knoten[i].distanz_zum_start = Integer.MAX_VALUE;
+            }
         }
 
     }
