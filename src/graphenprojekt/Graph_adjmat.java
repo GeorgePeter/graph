@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 public class Graph_adjmat {
 
+    private int real_knoten_anzahl = 0;
     private int knzahl = 7;
     int[][] kante;                  // Kantenmatrix
     public Knoten[] knoten;         // Knotenvektor
@@ -33,12 +34,18 @@ public class Graph_adjmat {
 
         if (KnotenAnStelle(x, y) == null) {
             if (!enthält(Kn)) {
-                for(int i = 0; i<=knzahl;i++) {
+                
+                for(int i = 0; i<knzahl;i++) {
                     if(knoten[i] == null) {
+                        
                         knoten[i] = new Knoten(x, y, Kn);
+                        real_knoten_anzahl ++;
                         return true;   
                     }
                 }
+                
+                JOptionPane.showMessageDialog(null, "Alle Knoten bereits gesetzt", "Info", JOptionPane.WARNING_MESSAGE);
+                
             } else {
                 JOptionPane.showMessageDialog(null, "Knoten mit diesem Zeichen bereits vorhanden", "Info", JOptionPane.WARNING_MESSAGE);
             }
@@ -81,8 +88,10 @@ public class Graph_adjmat {
 
         int i;
         for (i = 0; i < knzahl; i++) {
-            if (knoten[i].data == kn) {
-                return i;
+            if(knoten[i] != null){
+                if (knoten[i].data == kn) {
+                    return i;
+                }
             }
         }
         return -1;
@@ -117,6 +126,7 @@ public class Graph_adjmat {
             for (int i = 0; i < knzahl; i++) {
                 if (knoten[i] != null && knoten[i].data == Kn) {
                     knoten[i]= null;
+                    real_knoten_anzahl --;
                     for (int t = 0; t < knzahl; t++) {
                         kante[i][t] = 0;
                         kante[t][i] = 0;
@@ -149,7 +159,7 @@ public class Graph_adjmat {
             f = new BufferedWriter(
                     new FileWriter(file));
 
-            f.write(this.knzahl + "");
+            f.write(this.real_knoten_anzahl + "");
             f.newLine();
             Knoten cur;
             for (int i = 1; i <= this.knzahl; ++i) {
@@ -164,9 +174,12 @@ public class Graph_adjmat {
             int c = 0;
             for (int i = 0; i < this.knzahl; i++) {
                 for (int k = 0; k < this.knzahl; k++) {
-                    c = this.kante[i][k];
-                    s = c + ";";
-                    f.write(s);
+                    if(knoten[i] != null && knoten[k] != null) {
+                        
+                        c = this.kante[i][k];
+                        s = c + ";";
+                        f.write(s);
+                    }
                 }
                 f.newLine();
             }
@@ -212,7 +225,7 @@ public class Graph_adjmat {
                 }
 
             }
-
+            
 
             f.close();
         } catch (Exception e) {
