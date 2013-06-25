@@ -196,6 +196,7 @@ public class GraphenProjekt extends JFrame {
         }
         //Doppelpufferung
         Graphics2D g2dComponent = (Graphics2D) gg;
+        
         g2dComponent.drawImage(bufferedImage, null, 0, 0);
         g.clearRect(xpadding, ypadding_oben, this.getWidth()-2*xpadding, this.getHeight()-ypadding-ypadding_oben);
 
@@ -231,7 +232,7 @@ public class GraphenProjekt extends JFrame {
                 // Auswahldialog
                 
                 String tempknotenstring = (String) JOptionPane.showInputDialog(null,
-                        "Zeichen",
+                        "Zeichen (nur eins)",
                         "neuen knoten wählen",
                         JOptionPane.QUESTION_MESSAGE,
                         null, null,"");
