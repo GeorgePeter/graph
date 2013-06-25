@@ -229,6 +229,7 @@ public class GraphenProjekt extends JFrame {
                 action = KNOTEN_LEGEN;
                 repaint();
                 // Auswahldialog
+                
                 String tempknotenstring = (String) JOptionPane.showInputDialog(null,
                         "Zeichen",
                         "neuen knoten wählen",
@@ -344,10 +345,7 @@ public class GraphenProjekt extends JFrame {
         laden.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                
-                
-               graph = new Graph_adjmat(maximale_Knotenanzahl); 
-               graph.toleranz = Knotendurchmesser / 2;
+                            
                
                 int rueckgabeWert = dateiauswahl.showOpenDialog(null);
                 dateiauswahl.setDialogType(JFileChooser.OPEN_DIALOG);
@@ -355,6 +353,8 @@ public class GraphenProjekt extends JFrame {
                 if(rueckgabeWert == JFileChooser.APPROVE_OPTION)
                 {
                      // Ausgabe der ausgewaehlten Datei
+                    graph = new Graph_adjmat(maximale_Knotenanzahl); 
+                    graph.toleranz = Knotendurchmesser / 2;
                     graph.dateilesen(dateiauswahl.getSelectedFile().getPath());
                 }
                 
