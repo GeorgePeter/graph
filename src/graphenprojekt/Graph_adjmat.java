@@ -21,6 +21,8 @@ public class Graph_adjmat {
 
         kante = new int[kn][kn];
         knoten = new Knoten[kn];
+        knzahl = kn;
+        
         for (int i = 0; i < knzahl; i++) // Initialisieren: alle Kanten-
         {
             for (int j = 0; j < knzahl; j++) {

@@ -44,7 +44,7 @@ public class GraphenProjekt extends JFrame {
     /**
      * Spielfeldvariablen
      */
-    int maximale_Knotenanzahl = 7;
+    int maximale_Knotenanzahl = 12;
     int Knotendurchmesser = 30;
     int Knotendurchmesser_markiert = 34;
     int xpadding = 30;
