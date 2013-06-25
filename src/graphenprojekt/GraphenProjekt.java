@@ -329,8 +329,9 @@ public class GraphenProjekt extends JFrame {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 
-                int rueckgabeWert = dateiauswahl.showOpenDialog(null);
                 dateiauswahl.setDialogType(JFileChooser.SAVE_DIALOG);
+                int rueckgabeWert = dateiauswahl.showSaveDialog(null);
+                
                 /* Abfrage, ob auf "Öffnen" geklickt wurde */
                 if(rueckgabeWert == JFileChooser.APPROVE_OPTION)
                 {
