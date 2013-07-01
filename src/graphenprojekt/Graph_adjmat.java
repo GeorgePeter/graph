@@ -10,14 +10,19 @@ import javax.swing.JOptionPane;
 
 public class Graph_adjmat {
 
+    //zählt die wirkliche Knotenanzahl
     private int real_knoten_anzahl = 0;
-    private int knzahl = 7;
+    private int knzahl = 7;         //maximale Knotenanzahl
     int[][] kante;                  // Kantenmatrix
     public Knoten[] knoten;         // Knotenvektor
-    public int toleranz = 0;    // Radius in dem der Knoten noch als der 
-    // selbe gilt (radius der Knoten in der GUI)
+    public int toleranz = 0;        // Radius in dem der Knoten noch als der 
+                                    // selbe gilt (radius der Knoten in der GUI)
 
-    Graph_adjmat(int kn) {          // kn maximale Knotenzahl
+    /**
+     * Konstruktor
+     * @param kn Maximale Knotenzahl
+     */
+    Graph_adjmat(int kn) {
 
         kante = new int[kn][kn];
         knoten = new Knoten[kn];
@@ -32,6 +37,15 @@ public class Graph_adjmat {
         }
     }
 
+    /**
+     * erzeugt einen neuen Knoten bei den Koordinaten x,y 
+     * mit dem Zeichen Kn
+     * 
+     * @param x x-Koordinate
+     * @param y y-Koordinate
+     * @param Kn Zeichen des Knotens
+     * @return 
+     */
     public boolean knotenneu(int x, int y, char Kn) {
 
         if (KnotenAnStelle(x, y) == null) {
@@ -57,6 +71,13 @@ public class Graph_adjmat {
         return false;
     }
 
+    /**
+     * Liefert true falls der Knoten mit dem Zeichen a
+     * Teil des Graphen ist.
+     * 
+     * @param a Zeichen nach dem gesucht wird
+     * @return 
+     */
     public boolean enthält(char a) {
 
         for (int i = 0; i < knzahl; i++) // Initialisieren: alle Kanten-
@@ -71,6 +92,14 @@ public class Graph_adjmat {
         return false;
     }
 
+    /**
+     * prüft ob an der Stelle x,y bereits ein Knoten existiert
+     * dabei wird im Umkreis des toleranz-Attributes gesucht.
+     * 
+     * @param x
+     * @param y
+     * @return 
+     */
     public Knoten KnotenAnStelle(int x, int y) {
 
 
@@ -86,6 +115,12 @@ public class Graph_adjmat {
         return null;
     }
 
+    /**
+     * Liefert den internen Index vom Knoten mit dem Zeichen kn
+     * 
+     * @param kn
+     * @return 
+     */
     public int knotennr(char kn) {
 
         int i;
@@ -118,8 +153,8 @@ public class Graph_adjmat {
     }
 
     /**
-     * TODO: beim löschen wärs besser zu sagen knoten[i] = null == erledigt
-     *
+     * Löscht den Knoten Kn
+     * 
      * @param Kn
      * @param graph
      */
@@ -139,7 +174,12 @@ public class Graph_adjmat {
             JOptionPane.showMessageDialog(null, "Knoten nicht vorhanden", "Info", JOptionPane.WARNING_MESSAGE);
         }
     }
-
+    /**
+     * löscht alle Verbindungen zwischen K1 und K2
+     * 
+     * @param K1
+     * @param K2 
+     */
     public void kanteloeschen(char K1, char K2) {
         int n1, n2;
         //Prüfen, ob beide Knoten existieren !
@@ -153,6 +193,11 @@ public class Graph_adjmat {
         }
     }
 
+    /**
+     * Speichert den aktuellen Graphen in die Datei file
+     * 
+     * @param file der Dateipfad 
+     */
     public void dateischreiben(String file) {
         BufferedWriter f;
         String s;
@@ -183,7 +228,9 @@ public class Graph_adjmat {
                         f.write(s);
                     }
                 }
-                f.newLine();
+                if(knoten[i] != null){
+                    f.newLine();
+                }
             }
 
             f.newLine();
@@ -192,7 +239,10 @@ public class Graph_adjmat {
             JOptionPane.showMessageDialog(null, "Fehler beim erstellen der Datei", "Info", JOptionPane.WARNING_MESSAGE);
         }
     }
-
+    /**
+     * Lädt einen Graphen aus file
+     * @param file Datei von der gelesen wird
+     */
     public void dateilesen(String file) {
         BufferedReader f;
         String w;
@@ -235,6 +285,9 @@ public class Graph_adjmat {
         }
     }
 
+    /**
+     * entfernt die Markierungen aller Knoten
+     */
     public void AlleEntmarkieren() {
         for (int i = 0; i < this.knzahl; i++) {
             if(knoten[i] != null){
@@ -244,6 +297,10 @@ public class Graph_adjmat {
 
     }
 
+    /**
+     * entfernt alle Markierungen und setzt die Dijkstra-relevanten
+     * Variablen zurück
+     */
     public void AlleStatusZurücksetzen() {
 
         for (int i = 0; i < this.knzahl; i++) {
