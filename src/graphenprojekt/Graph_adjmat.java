@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
+/**
+ * Die Klasse die den Graphen organisiert
+ * @author george,sascha
+ */
 public class Graph_adjmat {
 
     //zählt die wirkliche Knotenanzahl
@@ -158,8 +162,8 @@ public class Graph_adjmat {
      * @param Kn
      * @param graph
      */
-    public void knotenloeschen(char Kn, Graph_adjmat graph) {
-        if (graph.enthält(Kn)) {
+    public void knotenloeschen(char Kn) {
+        if (this.enthält(Kn)) {
             for (int i = 0; i < knzahl; i++) {
                 if (knoten[i] != null && knoten[i].data == Kn) {
                     knoten[i]= null;
@@ -253,8 +257,7 @@ public class Graph_adjmat {
                     new FileReader(file));
             w = f.readLine();
             nzahl = Integer.parseInt(w);
-
-            System.out.println("" + nzahl);
+            
             for (int i = 0; i < nzahl; i++) {
 
 

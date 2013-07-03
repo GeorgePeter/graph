@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package graphenprojekt;
 
 import java.awt.Color;
@@ -12,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-//schallala
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -22,7 +17,7 @@ import javax.swing.*;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Hauptklasse für GUI-Aktionen und grafische Ausgabe
  * @author george,Sascha
  */
 public class GraphenProjekt extends JFrame {
@@ -116,6 +111,9 @@ public class GraphenProjekt extends JFrame {
 
     }
     
+    /**
+     * verwirft den aktuellen Graph und erzeugt einen neuen
+     */
     public void Neu(){
         
         graph = new Graph_adjmat(maximale_Knotenanzahl); 
@@ -430,7 +428,7 @@ public class GraphenProjekt extends JFrame {
                 case KNOTEN_ENTFERNEN:
                     tst = graph.KnotenAnStelle(x, y);
                     if(tst != null){
-                        graph.knotenloeschen(tst.data, graph);
+                        graph.knotenloeschen(tst.data);
                     }
                     action = NICHTS;
                     break;
